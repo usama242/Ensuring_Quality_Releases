@@ -7,9 +7,13 @@ variable "tenant_id" {}
 # Resource Group/Location
 variable "resource_group" {}
 variable "application_type" {}
+variable "packer_image" {}
 
 # Network
 variable virtual_network_name {}
 variable address_prefix_test {}
 variable address_space {}
 
+variable admin_username {}
+variable public_key_path {}
+variable access_key {}

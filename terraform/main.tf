@@ -9,12 +9,18 @@ terraform {
   backend "azurerm" {
     storage_account_name = "tstate10494"
     container_name       = "tstate"
-    access_key           = "Gt06tbj6PSgPHLwC2dqO0MVqNcdyyiWpygyybWoVptyVyIiboZ+hai+Y03aEPvrCGkBJ/aaKETI++ASte4UiCw=="
+    access_key           = var.access_key
   }
 }
 # Get the resource group
 data "azurerm_resource_group" "udacity-rg" {
   name = var.resource_group
+}
+
+# Get the custom packer image
+data "azurerm_image" "udacity-image" {
+  name                = var.packer_image
+  resource_group_name = var.resource_group
 }
 
 module "network" {
@@ -50,4 +56,17 @@ module "publicip" {
   application_type = "${var.application_type}"
   resource_type    = "publicip"
   resource_group   = data.azurerm_resource_group.udacity-rg.name
+}
+
+module "vm" {
+  source               = "./modules/vm"
+  location             = data.azurerm_resource_group.udacity-rg.location
+  resource_group       = data.azurerm_resource_group.udacity-rg.name
+  resource_type        = "vm"
+
+  admin_username       = var.admin_username
+  subnet_id_test       = module.network.subnet_id_test
+  instance_ids         = module.publicip.public_ip_address_id
+  packer_image         = data.azurerm_image.udacity-image.id
+  public_key_path      = var.public_key_path
 }
