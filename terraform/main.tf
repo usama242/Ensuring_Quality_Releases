@@ -7,48 +7,47 @@ provider "azurerm" {
 }
 terraform {
   backend "azurerm" {
-    storage_account_name = ""
-    container_name       = ""
-    key                  = ""
-    access_key           = ""
+    storage_account_name = "tstate10494"
+    container_name       = "tstate"
+    access_key           = "Gt06tbj6PSgPHLwC2dqO0MVqNcdyyiWpygyybWoVptyVyIiboZ+hai+Y03aEPvrCGkBJ/aaKETI++ASte4UiCw=="
   }
 }
-module "resource_group" {
-  source               = "../../modules/resource_group"
-  resource_group       = "${var.resource_group}"
-  location             = "${var.location}"
+# Get the resource group
+data "azurerm_resource_group" "udacity-rg" {
+  name = var.resource_group
 }
+
 module "network" {
-  source               = "../../modules/network"
+  source               = "./modules/network"
   address_space        = "${var.address_space}"
-  location             = "${var.location}"
+  location             = data.azurerm_resource_group.udacity-rg.location
   virtual_network_name = "${var.virtual_network_name}"
   application_type     = "${var.application_type}"
   resource_type        = "NET"
-  resource_group       = "${module.resource_group.resource_group_name}"
+  resource_group       = data.azurerm_resource_group.udacity-rg.name
   address_prefix_test  = "${var.address_prefix_test}"
 }
 
 module "nsg-test" {
-  source           = "../../modules/networksecuritygroup"
-  location         = "${var.location}"
+  source           = "./modules/networksecuritygroup"
+  location         = data.azurerm_resource_group.udacity-rg.location
   application_type = "${var.application_type}"
   resource_type    = "NSG"
-  resource_group   = "${module.resource_group.resource_group_name}"
+  resource_group   = data.azurerm_resource_group.udacity-rg.name
   subnet_id        = "${module.network.subnet_id_test}"
   address_prefix_test = "${var.address_prefix_test}"
 }
 module "appservice" {
-  source           = "../../modules/appservice"
-  location         = "${var.location}"
+  source           = "./modules/appservice"
+  location         = data.azurerm_resource_group.udacity-rg.location
   application_type = "${var.application_type}"
   resource_type    = "AppService"
-  resource_group   = "${module.resource_group.resource_group_name}"
+  resource_group   = data.azurerm_resource_group.udacity-rg.name
 }
 module "publicip" {
-  source           = "../../modules/publicip"
-  location         = "${var.location}"
+  source           = "./modules/publicip"
+  location         = data.azurerm_resource_group.udacity-rg.location
   application_type = "${var.application_type}"
   resource_type    = "publicip"
-  resource_group   = "${module.resource_group.resource_group_name}"
+  resource_group   = data.azurerm_resource_group.udacity-rg.name
 }
