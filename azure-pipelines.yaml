@@ -117,16 +117,13 @@ stages:
     pool:
       name: $(pool)
     steps:
-    - task: NodeTool@0
-      displayName: Install Node v16.x
-      inputs:
-        versionSpec: '16.17.0'
     - task: Bash@3
-      displayName: 'Install Newman'
+      displayName: 'Install Node & Newman'
       inputs:
         targetType: 'inline'
         script: |
           #! /bin/bash
+          sudo install nodejs
           sudo npm install -g newman
           sudo npm install newman-reporter-junitfull -g      
 
