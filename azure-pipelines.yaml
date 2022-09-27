@@ -12,7 +12,7 @@ stages:
     displayName: Create Resources
     steps:
     - checkout: self
-    - task: TerraformInstaller
+    - task: TerraformInstaller@0
       displayName: Install Terraform
       inputs:
         terraformVersion:  $(terraformVersion)
