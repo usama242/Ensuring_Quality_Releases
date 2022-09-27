@@ -16,49 +16,31 @@ stages:
       displayName: Install Terraform
       inputs:
         terraformVersion:  $(terraformVersion)
-    - task: CmdLine@2
-      inputs:
-        script: |
-          cd ~
-          cd $(projectRoot)/terraform
-          ls -a
-          sudo apt-get update 
-          sudo apt-get install zip unzip
-          terraform init
-
     - task: TerraformCLI@0
-      displayName: Terraform Plan
+      displayName: 'Initialize Terraform'
       inputs:
         provider: 'azurerm'
-        command: 'plan'
+        command: 'init'
         backendServiceArm: $(serviceConnectionName)
         backendAzureRmResourceGroupName: $(resourceGroup)
         backendAzureRmStorageAccountName: $(storageAccountName)
         backendAzureRmContainerName: 'tstate'
         backendAzureRmKey: 'terraform.tfstate'
-        environmentServiceNameAzureRM: 'myServiceConn'
         workingDirectory:  $(projectRoot)/terraform/
         Configuration directory*: '$(projectRoot)/terraform/'
 
     - task: TerraformCLI@0
-      displayName: Terraform Plan
+      displayName: Terraform Apply
       inputs:
         provider: 'azurerm'
         command: 'apply'
-        backendServiceArm: $(serviceConnectionName)
-        backendAzureRmResourceGroupName: $(resourceGroup)
-        backendAzureRmStorageAccountName: $(storageAccountName)
-        backendAzureRmContainerName: 'tstate'
-        backendAzureRmKey: 'terraform.tfstate'
-        environmentServiceNameAzureRM: 'myServiceConn'
-        workingDirectory:  $(projectRoot)/terraform/
-        Configuration directory*: '$(projectRoot)/terraform/'
+        workingDirectory: '$(projectRoot)/terraform/'
+        commandOptions: '-var "public_key_path=$(id_rsa.pub.secureFilePath)"'
+        environmentServiceNameAzureRM: $(serviceConnectionName)
 
 
 
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload FakeRestAPI Package'
-      artifact: drop-fakerestapi
+
 
     # - publish: automatedtesting/selenium/functional_ui_test.py
     #   displayName: 'Upload UI Tests definition'
@@ -78,6 +60,9 @@ stages:
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+      displayName: 'Upload FakeRestAPI Package'
+      artifact: drop-fakerestapi
 
 
 - stage: Deploy
