@@ -2,58 +2,59 @@ name: Azure Pipelines
 variables:
   - group: quality
 stages:
-- stage: Build
-  jobs:
-  - job: Build
+- stage: Provision
+  displayName: Provisioning infrastructure
+  jobs: 
+  - job: CreateResources
+    continueOnError: false
     pool:
-      name: $(pool)
+        name: $(pool)
+    displayName: Create Resources
     steps:
-      # Needed for Terraform VM deployment
-    - task: InstallSSHKey@0
+    - checkout: self
+    - task: TerraformInstaller
+      displayName: Install Terraform
       inputs:
-        knownHostsEntry: $(knownHostsEntry)
-        sshPublicKey: '$(myPubKey)'
-        sshKeySecureFile: 'id_rsa'
-
-    - task: DownloadSecureFile@1
-      name: udacity_public_key
-      displayName: 'Download Public Key'
+        terraformVersion:  $(terraformVersion)
+    - task: CmdLine@2
       inputs:
-        secureFile: 'id_rsa.pub'
-        
-    - task: TerraformInstaller@0
-      displayName: 'Install Terraform'
-      inputs:
-        terraformVersion: '1.3.0'
+        script: |
+          cd ~
+          cd $(projectRoot)/terraform
+          ls -a
+          sudo apt-get update 
+          sudo apt-get install zip unzip
+          terraform init
 
     - task: TerraformCLI@0
-      displayName: 'Initialize Terraform'
+      displayName: Terraform Plan
       inputs:
         provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environment/test'
+        command: 'plan'
         backendServiceArm: $(serviceConnectionName)
         backendAzureRmResourceGroupName: $(resourceGroup)
         backendAzureRmStorageAccountName: $(storageAccountName)
         backendAzureRmContainerName: 'tstate'
         backendAzureRmKey: 'terraform.tfstate'
+        environmentServiceNameAzureRM: 'myServiceConn'
+        workingDirectory:  $(projectRoot)/terraform/
+        Configuration directory*: '$(projectRoot)/terraform/'
 
     - task: TerraformCLI@0
-      displayName: 'Deploy Cloud Infrastructure'
+      displayName: Terraform Plan
       inputs:
         provider: 'azurerm'
         command: 'apply'
-        workingDirectory: '$(projectRoot)/terraform/environment/test'
-        commandOptions: '-var "public_key_path=$(udacity_public_key.secureFilePath)"'
-        environmentServiceNameAzureRM: $(serviceConnectionName)
+        backendServiceArm: $(serviceConnectionName)
+        backendAzureRmResourceGroupName: $(resourceGroup)
+        backendAzureRmStorageAccountName: $(storageAccountName)
+        backendAzureRmContainerName: 'tstate'
+        backendAzureRmKey: 'terraform.tfstate'
+        environmentServiceNameAzureRM: 'myServiceConn'
+        workingDirectory:  $(projectRoot)/terraform/
+        Configuration directory*: '$(projectRoot)/terraform/'
 
-    - task: ArchiveFiles@2
-      displayName: 'Archive FakeRestAPI'
-      inputs:
-        rootFolderOrFile: '/fakerestapi'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+
 
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
       displayName: 'Upload FakeRestAPI Package'
@@ -62,6 +63,22 @@ stages:
     # - publish: automatedtesting/selenium/functional_ui_test.py
     #   displayName: 'Upload UI Tests definition'
     #   artifact: drop-ui-tests
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build
+    pool: 
+      name: $(pool)
+    steps:
+    - checkout: self
+    - task: ArchiveFiles@2
+      displayName: 'Archive FakeRestAPI'
+      inputs:
+        rootFolderOrFile: '/fakerestapi'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+
 
 - stage: Deploy
   jobs:
