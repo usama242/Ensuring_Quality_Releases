@@ -3,7 +3,7 @@
 RESOURCE_GROUP_NAME="Azuredevops" #Cloud lab
 STORAGE_ACCOUNT_NAME=tstate$RANDOM
 CONTAINER_NAME=tstate
-LOCATION=SouthcentralUS
+LOCATION=EastUS
 
 # Create storage account
 az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku Standard_LRS --encryption-services blob

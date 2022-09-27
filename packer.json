@@ -1,8 +1,8 @@
 {
     "variables": {
-        "client_id": "{{env `ARM_CLIENT_ID`}}",
-        "client_secret": "{{env `ARM_CLIENT_SECRET`}}",
-        "subscription_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
+        "client_id": "3cd224fc-0ea1-44f2-ab46-d2ecd9cb575a",
+        "client_secret": "FJO8Q~dChUs8oSVu4S~tYNxjz7AXDXqw.E2AFbbs",
+        "subscription_id": "481b1dfa-09f6-4305-a978-b656e03d8e84",
         "resource_group_name": "Azuredevops"
     },
     "builders": [

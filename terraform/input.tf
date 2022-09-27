@@ -16,4 +16,3 @@ variable address_space {}
 
 variable admin_username {}
 variable public_key_path {}
-variable access_key {}
