@@ -91,7 +91,6 @@ stages:
     # - publish: $(Build.ArtifactStagingDirectory)/postman.zip
     #   artifact: postman
 
-
 - stage: Deploy
   jobs:
   - deployment: DeployFakeRestAPI
@@ -109,12 +108,10 @@ stages:
                 azureSubscription: $(serviceConnectionName)
                 appName: $(webAppName)
                 appType: webApp
-                package:
-                $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+                package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
                 
 - stage: Tests
   jobs:
-
   - job: Integration
     displayName: 'Integration Tests'
     pool:
