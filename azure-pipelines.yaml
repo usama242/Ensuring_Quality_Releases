@@ -12,6 +12,27 @@ stages:
     displayName: Create Resources
     steps:
     - checkout: self
+    # Download SSH keys
+    - task: DownloadSecureFile@1
+      inputs:
+        secureFile: 'id_rsa'
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Agent.TempDirectory)'
+        Contents: id_rsa
+        TargetFolder: '~/.ssh/'
+
+    - task: DownloadSecureFile@1
+      inputs:
+        secureFile: 'id_rsa.pub'
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Agent.TempDirectory)'
+        Contents: id_rsa.pub
+        TargetFolder: '~/.ssh/'
+
     - task: TerraformInstaller@0
       displayName: Install Terraform
       inputs:
@@ -35,16 +56,8 @@ stages:
         provider: 'azurerm'
         command: 'apply'
         workingDirectory: '$(projectRoot)/terraform/'
-        commandOptions: '-var "public_key_path=$(id_rsa.pub.secureFilePath)"'
         environmentServiceNameAzureRM: $(serviceConnectionName)
 
-
-
-
-
-    # - publish: automatedtesting/selenium/functional_ui_test.py
-    #   displayName: 'Upload UI Tests definition'
-    #   artifact: drop-ui-tests
 - stage: Build
   displayName: Build
   jobs:
