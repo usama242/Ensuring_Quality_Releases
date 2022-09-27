@@ -117,8 +117,12 @@ stages:
     pool:
       name: $(pool)
     steps:
+    - task: NodeTool@0
+      displayName: Install Node v16.x
+      inputs:
+        versionSpec: '16.17.0'
     - task: Bash@3
-      displayName: 'Install Postman & Newman'
+      displayName: 'Install Newman'
       inputs:
         targetType: 'inline'
         script: |
@@ -133,7 +137,6 @@ stages:
         targetType: 'inline'
         script: |
           #! /bin/bash
-
           newman run RegressionTest.json \
             -e Env.json \
             -r cli,junitfull \
@@ -146,7 +149,6 @@ stages:
         targetType: 'inline'
         script: |
           #! /bin/bash
-
           newman run ValidationTest.json \
             -e Env.json \
             -r cli,junitfull \
