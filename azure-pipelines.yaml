@@ -14,20 +14,24 @@ stages:
     - checkout: self
     # Download SSH keys
     - task: DownloadSecureFile@1
+      displayName: Download private SSH key
       inputs:
         secureFile: 'id_rsa'
 
     - task: CopyFiles@2
+      displayName: Copy private SSH key
       inputs:
         SourceFolder: '$(Agent.TempDirectory)'
         Contents: id_rsa
         TargetFolder: '~/.ssh/'
 
     - task: DownloadSecureFile@1
+      displayName: Download public SSH key
       inputs:
         secureFile: 'id_rsa.pub'
 
     - task: CopyFiles@2
+      displayName: Copy public SSH key
       inputs:
         SourceFolder: '$(Agent.TempDirectory)'
         Contents: id_rsa.pub
@@ -65,7 +69,6 @@ stages:
     pool: 
       name: $(pool)
     steps:
-    - checkout: self
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
       inputs:
@@ -77,11 +80,22 @@ stages:
       displayName: 'Upload FakeRestAPI Package'
       artifact: drop-fakerestapi
 
+    # - task: ArchiveFiles@2
+    #   displayName: 'Build and upload postman files'
+    #   inputs:
+    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+    #     includeRootFolder: false
+    #     archiveType: zip
+    #     archiveFile: $(Build.ArtifactStagingDirectory)/postman.zip
+    #     replaceExistingArchive: true
+    # - publish: $(Build.ArtifactStagingDirectory)/postman.zip
+    #   artifact: postman
+
 
 - stage: Deploy
   jobs:
   - deployment: DeployFakeRestAPI
-    displayName: 'Deploy app to custom VM'
+    displayName: 'Deploy app to Appservie'
     pool:
       name: $(pool)
     environment: 'TEST'
@@ -95,4 +109,55 @@ stages:
                 azureSubscription: $(serviceConnectionName)
                 appName: $(webAppName)
                 appType: webApp
-                package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+                package:
+                $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+                
+- stage: Tests
+  jobs:
+
+  - job: Integration
+    displayName: 'Integration Tests'
+    pool:
+      name: $(pool)
+    steps:
+    - task: Bash@3
+      displayName: 'Install Postman & Newman'
+      inputs:
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
+          sudo npm install -g newman
+          sudo npm install newman-reporter-junitfull -g      
+
+    - task: Bash@3
+      displayName: 'Regression Tests'
+      inputs:
+        workingDirectory: 'automatedtesting/postman'
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
+
+          newman run RegressionTest.json \
+            -e Env.json \
+            -r cli,junitfull \
+            --reporter-junitfull-export JUnitReportRegression.xml
+
+    - task: Bash@3
+      displayName: 'Data Validation Tests'
+      inputs:
+        workingDirectory: 'automatedtesting/postman'
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
+
+          newman run ValidationTest.json \
+            -e Env.json \
+            -r cli,junitfull \
+            --reporter-junitfull-export JUnitReportValidation.xml
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/JUnitReport*.xml'
+        testRunTitle: 'Publish test results'
+        searchFolder: 'automatedtesting/postman'
