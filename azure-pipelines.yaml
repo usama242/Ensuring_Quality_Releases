@@ -115,7 +115,9 @@ stages:
           curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
           sudo apt install nodejs
           sudo npm install -g newman
-          sudo npm install newman-reporter-junitfull -g      
+          sudo npm install newman-reporter-junitfull -g
+          sudo apt install default-jdk
+          sudo apt install default-jre      
 
     - task: Bash@3
       displayName: 'Regression Tests'
