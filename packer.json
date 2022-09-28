@@ -36,7 +36,11 @@
                 "unzip chromedriver_linux64.zip",
                 "rm chromedriver_linux64.zip",
                 "chown root:root chromedriver",
-                "chmod 777 chromedriver"
+                "chmod 777 chromedriver",
+                "curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -",
+                "sudo apt install nodejs",
+                "sudo npm install -g newman",
+                "sudo npm install newman-reporter-junitfull -g" 
             ],
             "inline_shebang": "/bin/sh -x",
             "type": "shell",

@@ -80,17 +80,6 @@ stages:
       displayName: 'Upload FakeRestAPI Package'
       artifact: drop-fakerestapi
 
-    # - task: ArchiveFiles@2
-    #   displayName: 'Build and upload postman files'
-    #   inputs:
-    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    #     includeRootFolder: false
-    #     archiveType: zip
-    #     archiveFile: $(Build.ArtifactStagingDirectory)/postman.zip
-    #     replaceExistingArchive: true
-    # - publish: $(Build.ArtifactStagingDirectory)/postman.zip
-    #   artifact: postman
-
 - stage: Deploy
   jobs:
   - deployment: DeployFakeRestAPI
@@ -158,3 +147,58 @@ stages:
         testResultsFiles: '**/JUnitReport*.xml'
         testRunTitle: 'Publish test results'
         searchFolder: 'automatedtesting/postman'
+
+  - job: Performance
+    displayName: 'Performance Tests'
+    pool:
+      name: $(pool)
+    steps:
+
+    - task: JMeterInstaller@0
+      displayName: 'Install JMeter 5.2.1'
+      inputs:
+        jmeterVersion: '5.2.1'
+    
+    - task: Bash@3
+      displayName: 'Endurance Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: |
+          jmeter -n \
+            -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
+            -l endurance-test-report/endurance-results.jtl \
+            -e \
+            -o endurance-test-report
+
+    - task: publishhtmlreport@1
+      displayName: 'Publish Endurance Test Results'
+      inputs:
+        htmlType: 'Jmeter'
+        JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'    
+
+    - task: Bash@3
+      displayName: 'Stress Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: |
+          jmeter -n \
+            -t automatedtesting/jmeter/StressTestSuite.jmx \
+            -l stress-test-report/stress-results.jtl \
+            -e \
+            -o stress-test-report
+
+    - task: publishhtmlreport@1
+      displayName: 'Publish Stress Test Results'
+      inputs:
+        htmlType: 'Jmeter'
+        JmeterReportsPath: '$(Build.SourcesDirectory)/stress-test-report'    
+        
+        
+    - task: Bash@3
+      displayName: 'Print Performance Test Logs'
+      inputs:
+        targetType: 'inline'
+        script: |
+          ls -lah endurance-test-report/
+          ls -lah stress-test-report/
+          cat jmeter.log        
