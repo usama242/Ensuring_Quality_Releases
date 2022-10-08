@@ -51,15 +51,15 @@ stages:
         backendAzureRmStorageAccountName: $(storageAccountName)
         backendAzureRmContainerName: 'tstate'
         backendAzureRmKey: 'terraform.tfstate'
-        workingDirectory:  $(projectRoot)/terraform/
-        Configuration directory*: '$(projectRoot)/terraform/'
+        workingDirectory:  $(System.DefaultWorkingDirectory)/terraform/
+        Configuration directory*: '$(System.DefaultWorkingDirectory)/terraform/'
 
     - task: TerraformCLI@0
       displayName: Terraform Apply
       inputs:
         provider: 'azurerm'
         command: 'apply'
-        workingDirectory: '$(projectRoot)/terraform/'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceNameAzureRM: $(serviceConnectionName)
 
 - stage: Build
