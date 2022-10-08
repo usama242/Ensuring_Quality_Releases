@@ -102,7 +102,7 @@ stages:
 - stage: Tests
   jobs:
   - job: Integration
-    displayName: 'Integration Tests'
+    displayName: 'Postman Integration Tests'
     pool:
       name: $(pool)
     steps:
@@ -138,7 +138,25 @@ stages:
         searchFolder: 'automatedtesting/postman'
 
   - job: Performance
-    displayName: 'Performance Tests'
+    displayName: 'Jmeter Performance Tests'
+    pool:
+      name: $(pool)
+    steps:
+    
+    - task: Bash@3
+      displayName: 'Endurance Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/EnduranceTest.jmx'   
+
+    - task: Bash@3
+      displayName: 'Stress Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/EnduranceTest.jmx' 
+        
+  - job: Functional
+    displayName: 'Selenium UI Tests'
     pool:
       name: $(pool)
     steps:
@@ -148,41 +166,6 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          jmeter -n \
-            -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
-            -l endurance-test-report/endurance-results.jtl \
-            -e \
-            -o endurance-test-report
-
-    - task: publishhtmlreport@1
-      displayName: 'Publish Endurance Test Results'
-      inputs:
-        htmlType: 'Jmeter'
-        JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'    
-
-    - task: Bash@3
-      displayName: 'Stress Test Suite'
-      inputs:
-        targetType: 'inline'
-        script: |
-          jmeter -n \
-            -t automatedtesting/jmeter/StressTestSuite.jmx \
-            -l stress-test-report/stress-results.jtl \
-            -e \
-            -o stress-test-report
-
-    - task: publishhtmlreport@1
-      displayName: 'Publish Stress Test Results'
-      inputs:
-        htmlType: 'Jmeter'
-        JmeterReportsPath: '$(Build.SourcesDirectory)/stress-test-report'    
-        
-        
-    - task: Bash@3
-      displayName: 'Print Performance Test Logs'
-      inputs:
-        targetType: 'inline'
-        script: |
-          ls -lah endurance-test-report/
-          ls -lah stress-test-report/
-          cat jmeter.log        
+          cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
+          python3 login.py > selenium.log
+          cat selenium.log
