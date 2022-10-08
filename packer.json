@@ -1,8 +1,8 @@
 {
     "variables": {
-        "client_id": "3cd224fc-0ea1-44f2-ab46-d2ecd9cb575a",
-        "client_secret": "FJO8Q~dChUs8oSVu4S~tYNxjz7AXDXqw.E2AFbbs",
-        "subscription_id": "481b1dfa-09f6-4305-a978-b656e03d8e84",
+        "client_id": "{{env `CLIENT_ID`}}",
+        "client_secret": "{{env `CLIENT_SECRET`}}",
+        "subscription_id": "{{env `SUBSCRIPTION_ID`}}",
         "resource_group_name": "Azuredevops"
     },
     "builders": [
@@ -40,7 +40,9 @@
                 "curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -",
                 "sudo apt install nodejs",
                 "sudo npm install -g newman",
-                "sudo npm install newman-reporter-junitfull -g" 
+                "sudo npm install newman-reporter-junitfull -g",
+                "sudo apt install default-jdk -y",
+                "sudo apt install jmeter -y"
             ],
             "inline_shebang": "/bin/sh -x",
             "type": "shell",

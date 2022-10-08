@@ -8,9 +8,9 @@ provider "azurerm" {
 terraform {
   backend "azurerm" {
     key = "terraform.tfstate"
-    storage_account_name = "tstate8098"
+    storage_account_name = "tstate24037"
     container_name       = "tstate"
-    access_key           = "EtAnhLO7HC1ULF6dEu8MmnVbUgMhqqvazYEX4cwXCRmkvLothVw1sZLodRSlR+Sn7Qoba+k7aaz6+AStvS2+Ag=="
+    access_key           = "RZ5lKqfTtcJnNs/447KHn4NrNTSAqPk87k9ZiVLc1KLQuHxZNadxyyt8uLHH/l/OnLTqbblyH2q4+ASttYj4fA=="
   }
 }
 # Get the resource group

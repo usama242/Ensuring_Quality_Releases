@@ -107,19 +107,6 @@ stages:
       name: $(pool)
     steps:
     - task: Bash@3
-      displayName: 'Install Node & Newman'
-      inputs:
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
-          curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-          sudo apt install nodejs
-          sudo npm install -g newman
-          sudo npm install newman-reporter-junitfull -g
-          sudo apt install default-jdk
-          sudo apt install default-jre      
-
-    - task: Bash@3
       displayName: 'Regression Tests'
       inputs:
         workingDirectory: 'automatedtesting/postman'
@@ -155,11 +142,6 @@ stages:
     pool:
       name: $(pool)
     steps:
-
-    - task: JMeterInstaller@0
-      displayName: 'Install JMeter 5.2.1'
-      inputs:
-        jmeterVersion: '5.2.1'
     
     - task: Bash@3
       displayName: 'Endurance Test Suite'
