@@ -153,7 +153,7 @@ stages:
       displayName: 'Stress Test Suite'
       inputs:
         targetType: 'inline'
-        script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/EnduranceTest.jmx' 
+        script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTest.jmx' 
         
   - job: Functional
     displayName: 'Selenium UI Tests'
