@@ -108,7 +108,19 @@ stages:
     steps:
     
     - task: Bash@3
-      displayName: 'Endurance Test Suite'
+      displayName: 'Download chromedriver'
+      inputs:
+        targetType: 'inline'
+        script: |
+          cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
+          wget https://chromedriver.storage.googleapis.com/105.0.5195.52/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          rm chromedriver_linux64.zip
+          chown root:root chromedriver
+          chmod 777 chromedriver"
+
+    - task: Bash@3
+      displayName: 'Run Selenium tests'
       inputs:
         targetType: 'inline'
         script: |
