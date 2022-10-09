@@ -126,7 +126,7 @@ stages:
         script: |
           cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
           python3 login.py > selenium.log
-          cp selenium.log $(Pipeline.Workspace)/Selenium/$(Build.BuildId)-selenium.log
+          cp selenium.log  /home/logs/Selenium/$(Build.BuildId)-selenium.log
 
   - job: Integration
     displayName: 'Postman Integration Tests'
