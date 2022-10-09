@@ -1,13 +1,16 @@
 # #!/usr/bin/env python
+import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service
 
 import time
-
+# Using logging instead of print to aid with log ingesting in Azure
+logging.basicConfig(filename='test.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
+logging.info('Starting the login test')
 
 def login (user, password):
-    print ('Starting the browser...')
+    logging.info('Starting the browser...')
     # --uncomment when running in Azure DevOps.
     options = ChromeOptions()
     options.add_argument("headless")
@@ -21,9 +24,9 @@ def login (user, password):
     driver = webdriver.Chrome('./chromedriver', options=options) #only when runnning in Linux!
     # driver = webdriver.Chrome(ChromeDriverManager().install())
 
-    print ('Browser started successfully. Navigating to the demo page to login.')
+    logging.info('Browser started successfully. Navigating to the demo page to login.')
     driver.get('https://www.saucedemo.com/')
-    print ('Login attempt, user: {},  password: {}'.format(user, password))
+    logging.info('Login attempt, user: {},  password: {}'.format(user, password))
     driver.find_element("css selector","input[id='user-name']").send_keys(user)
     driver.find_element("css selector","input[id='password']").send_keys(password)
     time.sleep(2)  
@@ -33,26 +36,26 @@ def login (user, password):
     assert our_search == "PRODUCTS"
 
     if (our_search == "PRODUCTS"):
-        print ('Login Success.')
+        logging.info('Login Success.')
     
     else:
-        print("unable to confirm that login has been succesfull")
+        logging.info("unable to confirm that login has been succesfull")
 
 
     items = ["sauce-labs-backpack","sauce-labs-bike-light","sauce-labs-bolt-t-shirt","sauce-labs-fleece-jacket","sauce-labs-onesie","test.allthethings()-t-shirt-(red)"]
 
-    print("attempt to add products to the cart now")
+    logging.info("attempt to add products to the cart now")
 
     for i in items:
-        print("adding " + i + " to the cart now...")
+        logging.info("adding " + i + " to the cart now...")
         driver.find_element("xpath","//*[@id='add-to-cart-{0}']".format(i)).click()
         
     time.sleep(3)
-    print("adding items to the cart has finished, removing them again now...")
+    logging.info("adding items to the cart has finished, removing them again now...")
 
    
     for i in items:
-        print("removing " + i + " from the cart now...")
+        logging.info("removing " + i + " from the cart now...")
         driver.find_element("xpath","//*[@id='remove-{0}']".format(i)).click()
 
     driver.quit()

@@ -125,8 +125,8 @@ stages:
         targetType: 'inline'
         script: |
           cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
-          python3 login.py > selenium.log
-          sudo cp selenium.log  /home/logs/Selenium/$(Build.BuildId)-selenium.log
+          python3 login.py
+          sudo cp login.log  /home/logs/Selenium/$(Build.BuildId)-selenium.log
 
   - job: Integration
     displayName: 'Postman Integration Tests'
