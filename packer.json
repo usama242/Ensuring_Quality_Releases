@@ -27,7 +27,7 @@
                 "apt-get update",
                 "apt-get upgrade -y",
                 "apt-get install python3-pip -y",
-                "apt-get install unzip -y",
+                "apt-get install zip unzip -y",
                 "apt-get install -y chromium-browser",
                 "apt-get install python3-venv",
                 "python3 -m venv env",

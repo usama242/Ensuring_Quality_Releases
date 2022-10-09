@@ -116,8 +116,8 @@ stages:
           wget https://chromedriver.storage.googleapis.com/105.0.5195.52/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
           rm chromedriver_linux64.zip
-          chown root:root chromedriver
-          chmod 777 chromedriver"
+          sudo chown root:root chromedriver
+          sudo chmod 777 chromedriver"
 
     - task: Bash@3
       displayName: 'Run Selenium tests'
