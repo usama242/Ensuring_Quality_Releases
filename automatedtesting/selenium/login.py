@@ -22,7 +22,6 @@ def login (user, password):
     options.add_experimental_option("detach", True)
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome('./chromedriver', options=options) #only when runnning in Linux!
-    # driver = webdriver.Chrome(ChromeDriverManager().install())
 
     logging.info('Browser started successfully. Navigating to the demo page to login.')
     driver.get('https://www.saucedemo.com/')
