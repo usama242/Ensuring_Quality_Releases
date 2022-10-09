@@ -9,8 +9,13 @@ many students
   https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops
 
 # The details of the project
-The project consists of a CI/CD pipeline with three phases.
+The project consists of a CI/CD pipeline with four phases.
 1. Provisioning
-This creates the infrastructure in Azure necessary for the app to run. This is
+This creates the infrastructure in Azure necessary for the app to run including
+the Appservice. This is
 done using Terraform
-2. 
+2. Build
+This builds the fakerestapi src code and uploads it to Azure
+3. Deploy
+This downloads the uploaded artifacts and deploys them to Azure Appservice
+4. Testing

@@ -169,7 +169,11 @@ stages:
     pool:
       name: $(pool)
     steps:
-    
+    - task: JMeterInstaller@0
+      displayName: 'Install JMeter 5.5'
+      inputs:
+        jmeterVersion: '5.5'
+
     - task: Bash@3
       displayName: 'Endurance Test Suite'
       inputs:
