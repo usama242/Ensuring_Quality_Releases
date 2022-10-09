@@ -5,8 +5,7 @@ Third project in Udacity's Azure devops nanodegree
 many students
 - There is a limitation on the number of build servers per accounts
 - To circumvent this limitation, we are using the self-hosted agent.
-- Follow this instruction on how to configure it
-  https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops
+
 # The details of the project
 The project consists of a CI/CD pipeline with four phases.
 1. Provisioning
@@ -45,15 +44,40 @@ git clone https://github.com/usama242/Ensuring_Quality_Releases.git
 
 ```bash
 az login 
-az account list --output table
 ```
 
 3. Configure storage account to Store Terraform state
 
-* Execute the script **azure-storage-account.sh** :
+* Execute the script **azure_storage.sh** :
 
 ```bash
-./azure-storage-account.sh
+./azure_storage.sh
 ```
 
-* Take notes of **storage_account_name**, **container_name**, **access_key** . They are will be used in **main.tf** terrafrom files ( lines 15 to 19)
+* Take notes of **storage_account_name**, **container_name**, **access_key** .
+  They are will be used in **main.tf** terrafrom files ( lines 15 to 19)
+
+4. Execute the packer file to create a custome image
+
+```bash
+packer build packer.json
+```
+
+5. Follow this instruction on how to configure a self-hosted agent
+  https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops
+
+6. After necessary modifications to the repo, create a repository in GitHub and
+   link it to the Azure pipelines
+
+7. Use azure-pipelines.yaml when asked for the yaml file.
+
+## Note
+The YAML files uses the following environment variables and 2 secret files which
+are the SSH keys
+
+- pool
+- resourceGroup
+- servieConnectionName
+- storageAccountName
+- terraformVersion
+- webAppName
