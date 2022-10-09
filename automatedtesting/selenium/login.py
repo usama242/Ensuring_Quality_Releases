@@ -20,7 +20,7 @@ def login (user, password):
     options.add_argument("start-maximized")
     options.add_experimental_option("detach", True)
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    driver = webdriver.Chrome('/snap/bin/chromium.chromedriver', options=options) #only when runnning in Linux!
+    driver = webdriver.Chrome('./chromedriver', options=options) #only when runnning in Linux!
     # driver = webdriver.Chrome(ChromeDriverManager().install())
 
     print ('Browser started successfully. Navigating to the demo page to login.')

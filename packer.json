@@ -32,7 +32,7 @@
                 "apt-get install python3-venv",
                 "python3 -m venv env",
                 "pip3 install selenium",
-                "wget https://chromedriver.storage.googleapis.com/87.0.4280.88/chromedriver_linux64.zip",
+                "wget https://chromedriver.storage.googleapis.com/105.0.5195.52/chromedriver_linux64.zip",
                 "unzip chromedriver_linux64.zip",
                 "rm chromedriver_linux64.zip",
                 "chown root:root chromedriver",
@@ -41,7 +41,7 @@
                 "sudo apt install nodejs",
                 "sudo npm install -g newman",
                 "sudo npm install newman-reporter-junitfull -g",
-                "sudo apt install default-jdk -y",
+                "sudo apt install openjdk-8-jdk -y",
                 "sudo apt install jmeter -y"
             ],
             "inline_shebang": "/bin/sh -x",

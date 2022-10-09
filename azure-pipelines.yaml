@@ -100,7 +100,22 @@ stages:
                 package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
                 
 - stage: Tests
-  jobs:
+  jobs:      
+  - job: Functional
+    displayName: 'Selenium UI Tests'
+    pool:
+      name: $(pool)
+    steps:
+    
+    - task: Bash@3
+      displayName: 'Endurance Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: |
+          cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
+          python3 login.py > selenium.log
+          cat selenium.log
+
   - job: Integration
     displayName: 'Postman Integration Tests'
     pool:
@@ -154,18 +169,3 @@ stages:
       inputs:
         targetType: 'inline'
         script: 'jmeter -n -t $(System.DefaultWorkingDirectory)/automatedtesting/jmeter/StressTest.jmx' 
-        
-  - job: Functional
-    displayName: 'Selenium UI Tests'
-    pool:
-      name: $(pool)
-    steps:
-    
-    - task: Bash@3
-      displayName: 'Endurance Test Suite'
-      inputs:
-        targetType: 'inline'
-        script: |
-          cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
-          python3 login.py > selenium.log
-          cat selenium.log
