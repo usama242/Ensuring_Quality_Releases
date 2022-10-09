@@ -117,7 +117,7 @@ stages:
           unzip chromedriver_linux64.zip
           rm chromedriver_linux64.zip
           sudo chown root:root chromedriver
-          sudo chmod 777 chromedriver"
+          sudo chmod 777 chromedriver
 
     - task: Bash@3
       displayName: 'Run Selenium tests'
