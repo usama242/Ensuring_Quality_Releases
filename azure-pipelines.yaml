@@ -120,7 +120,7 @@ stages:
           sudo chmod 777 chromedriver
 
     - task: Bash@3
-      displayName: 'Run Selenium tests'
+      displayName: 'Run Selenium test'
       inputs:
         targetType: 'inline'
         script: |
